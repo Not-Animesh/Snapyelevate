@@ -1,0 +1,163 @@
+Overall Goal for this Phase: Elevate the Snapy frontend to a premium, highly interactive, and visually stunning experience. Implement comprehensive pre-built custom gradient backgrounds. Maintain strict Vercel serverless compatibility.
+
+Guiding Principles:
+
+
+
+Aesthetic Excellence: Every visual element should be meticulously designed for beauty and modern appeal, supporting both light and dark modes seamlessly.
+
+Intuitive Interactivity: User interactions should feel natural, responsive, and provide clear, instant feedback.
+
+Performance: UI elements should load quickly and animations should be buttery smooth.
+
+Vercel Compatibility: Absolutely no Node.js server-specific code, binary dependencies, or unsupported features in the frontend that would break Vercel's serverless deployment model.
+
+Phase 1: Deep Dive into UI/UX & Visual Detailing
+
+AI Task: Refine all existing and implement new UI elements with a focus on a premium, highly responsive, and delightful user experience.
+
+
+
+Visual Design Language & Polish:
+
+Consistent Elevation: Apply a subtle, consistent shadow-lg or shadow-xl to prominent interactive elements (cards, modals, dropdowns) to give them depth.
+
+Border Radii Harmony: Ensure all rounded corners (buttons, inputs, cards, avatars) align with the established --radius variables in tailwind.config.ts for a cohesive look.
+
+Subtle Gradients in Elements: Incorporate very subtle bg-gradient-to-br effects in non-interactive background areas of cards or sections to add visual interest without distracting, drawing from the primary and blue-600 colors.
+
+Glassmorphism Refinement: Enhance the glass utility class for headers and overlays to ensure it looks consistent and performs well in both light and dark modes, possibly adjusting bg-opacity and backdrop-blur values.
+
+Animations & Micro-interactions:
+
+Hero Section Entrance: Implement a subtle animate-fade-in and animate-slide-in effect for the hero text and CTA buttons upon page load.
+
+Card Hover Effects: Ensure all Card components across dashboards and feature sections have a consistent, engaging hover effect (e.g., hover:-translate-y-1 hover:shadow-lg transition-all duration-300).
+
+Button Feedback: Add more expressive :active states or very subtle scale transforms (hover:scale-105) to all Button components for tactile feedback.
+
+Loading States: Implement Skeleton components or subtle Progress bars for data fetching states (e.g., project grid, AI generation).
+
+Toast Enhancements: Use the useToast hook for all asynchronous operations (save, export, AI generation success/failure). Ensure toasts are visually appealing and dismiss automatically.
+
+Typography & Iconography:
+
+Font Pairing: Suggest a modern, clean secondary font (if not already handled by Inter) for headings to complement Inter for body text.
+
+Icon Consistency: Review all lucide-react icon usage to ensure appropriate sizing (h-4 w-4, h-6 w-6, etc.) and color (text-primary, text-muted-foreground) throughout the application.
+
+Logo Consistency: Ensure the "Snapify" logo (using Zap icon and gradient text) is consistently styled and sized across all headers and footers.
+
+Form & Input States:
+
+Focus States: Ensure all input fields, buttons, and interactive components have distinct and aesthetically pleasing focus-visible rings (focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2) that are consistent with the ring color in tailwind.config.ts.
+
+Error/Success Visuals: Clearly indicate validation errors or successful input with visual cues (e.g., red borders, green checkmarks, descriptive text) for form elements.
+
+Accessibility (A11y):
+
+Keyboard Navigation: Ensure all interactive elements are reachable and operable via keyboard (tab, enter, space).
+
+ARIA Attributes: Verify appropriate ARIA attributes for complex components (dialogs, menus, tabs, sliders) to improve screen reader compatibility.
+
+Color Contrast: Maintain sufficient color contrast ratios for text and UI elements in both light and dark modes.
+
+Phase 2: Pre-Built Custom Gradient Backgrounds
+
+AI Task: Implement a set of beautiful, pre-defined custom gradient backgrounds that can be easily selected and applied in the editor and potentially other areas.
+
+
+
+Define Gradient Palette:
+
+Introduce a new section in frontend/app/globals.css (or tailwind.config.ts if a custom plugin is more appropriate) to define a set of named CSS custom properties for gradients.
+
+Example Gradients (Feel free to expand/modify these hex codes):
+
+
+
+CSS
+
+
+
+/* In frontend/app/globals.css */:root {
+
+  /* ... existing color variables ... */
+
+  --gradient-sunrise: linear-gradient(to top right, #FF7052, #FFB928);
+
+  --gradient-deep-sea: linear-gradient(to bottom left, #0072FF, #00C6FF);
+
+  --gradient-royal-velvet: linear-gradient(to top, #6A057A, #A60064);
+
+  --gradient-emerald-forest: linear-gradient(to bottom, #1D976C, #93F9B9);
+
+  --gradient-twilight: linear-gradient(to top right, #2C3E50, #4CA1AF);
+
+  /* Add more as desired for PikaCanvas's style */
+
+}.dark {
+
+  /* ... existing dark mode variables ... */
+
+  --gradient-sunrise: linear-gradient(to top right, #E06C75, #D19A66); /* Darker/muted versions */
+
+  --gradient-deep-sea: linear-gradient(to bottom left, #1263B0, #006D9C);
+
+  --gradient-royal-velvet: linear-gradient(to top, #50125F, #80004C);
+
+  --gradient-emerald-forest: linear-gradient(to bottom, #157F5A, #7AE89B);
+
+  --gradient-twilight: linear-gradient(to top right, #1F2E3A, #3B7C87);
+
+}
+
+Tailwind Integration: Ensure these CSS variables are accessible via Tailwind CSS classes (e.g., bg-gradient-sunrise) or through inline styles as needed.
+
+User Interface for Gradient Selection:
+
+Editor Sidebar (EditorSidebar.tsx):
+
+In the "Assets" tab, or potentially a new "Backgrounds" section, create a visually appealing gallery of these pre-built gradients.
+
+Each gradient should have a small preview swatch.
+
+Clicking a swatch should apply that gradient to the canvas background.
+
+Editor Properties Panel (EditorPropertiesPanel.tsx):
+
+When a shape or text element is selected, and its "Fill" property is active, provide an option to switch from a solid color to a gradient.
+
+Display the same gallery of pre-built gradients for easy selection.
+
+Implement the ability for the selected gradient to apply to the element's fill.
+
+Canvas & Element Application:
+
+Dynamic Background: Update EditorCanvas.tsx to dynamically apply the selected gradient to the canvas background using the CSS variables.
+
+Object Fills: Modify the canvas rendering logic (once Fabric.js/Konva.js is integrated) to apply selected gradients to the fill property of vector shapes and text elements.
+
+Phase 3: Vercel Serverless & Workflow Assurance
+
+AI Task: Ensure all code adheres to Vercel's serverless environment constraints and that all interaction flows are robust and fully functional.
+
+
+
+Vercel Serverless Compliance:
+
+No Node.js Server-Side Code in Frontend: The frontend should remain purely client-side React and Next.js static asset/server component compatible. Any dynamic processing or heavy computation must be offloaded to the FastAPI backend serverless functions.
+
+External API Calls: All interactions with Supabase, Clerk, Stripe, and AI services from the frontend must go through the FastAPI backend's API endpoints, not directly from the frontend (to protect API keys and centralize logic).
+
+Bundle Size Optimization: Ensure new features and dependencies don't excessively bloat client-side bundle sizes, which can impact loading performance.
+
+Workflow & Button Functionality (Refined):
+
+Complete Editor Loop: Ensure the full cycle of creating/modifying an element on the canvas -> updating its properties in the panel -> saving the project -> loading the project with all changes intact works flawlessly.
+
+Asset Lifecycle: Verify the flow for uploading custom images, generating AI assets, adding them to the canvas, saving, and exporting.
+
+Authentication & Authorization: Confirm that user roles (e.g., logged-in vs. guest, free vs. premium) correctly gate access to features (e.g., AI generations, premium templates, export formats).
+
+Subscription Flow: Test the entire subscription journey, from selecting a plan on the pricing page to successful payment via Stripe and the user's account updating to the correct tier.

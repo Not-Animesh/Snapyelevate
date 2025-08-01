@@ -1,0 +1,304 @@
+Project Title: PikaCanvas: The AI-Powered Vector and UI Design Toolkit
+
+Goal: Develop a scalable, feature-rich SaaS platform that provides a complete solution for creating beautiful and professional digital assets in a Pika.style-like web application. The platform will feature a powerful, browser-based vector editor and a separate asset management and generation module.
+
+The entire application will be built with a monorepo structure, deployed serverlessly on Vercel, and optimized for a seamless user experience.
+
+Core Principles for Development:
+
+Modern Web Standards: Utilize the latest technologies and best practices for a fast, secure, and responsive application.
+
+Serverless First: All backend logic will be designed as stateless Vercel Serverless Functions to ensure infinite scalability and a pay-per-use cost model. We will carefully select libraries that are compatible with Vercel's runtime environment.
+
+Vercel-Optimized Deployment: The project will use a monorepo with frontend/ (Next.js) and backend/ (FastAPI) directories, each with its own vercel.json file for "two-click" deployment.
+
+User Experience (UX) Focused: The UI/UX will be clean, intuitive, and beautiful, making complex tasks feel simple. The editor will provide a "what you see is what you get" (WYSIWYG) experience, with a focus on a polished, professional aesthetic. The design will feature a light/dark mode toggle and a consistent, elegant color palette.
+
+Robust Authentication: Implement a secure, production-ready authentication system with distinct user roles (User, Admin).
+
+Scalable Infrastructure: Leverage managed, serverless services for the database and file storage to support growth without infrastructure overhead.
+
+Monetization Ready: The platform will be built with a tiered subscription model, managed by a fully integrated payment processor.
+
+Research & Competitive Analysis:
+The inspiration comes from tools like Pika.style and other online design editors. The key differentiator will be the focus on a powerful vector engine and AI-driven asset generation, all within a beautiful, modern, and high-performance web application.
+
+This is a powerful, integrated value proposition.
+
+Technical Stack Recommendations & Justification:
+
+Frontend:
+
+Framework: Next.js (React Framework)
+
+Why: Provides the ideal foundation for a performant, component-based application with robust routing and Vercel's built-in optimizations.
+
+Authentication: Clerk
+
+Why: Seamlessly integrates with Next.js and Vercel, providing a secure and fully featured user management system with minimal custom code.
+
+Styling: Tailwind CSS (with Shadcn UI components)
+
+Why: Enables rapid and consistent UI development for the dashboards and marketing pages. The focus on a beautiful design with light/dark mode is easily achieved with Tailwind's utility-first approach.
+
+Editor Frontend Technologies:
+
+Vector Graphics Library: A powerful library like Fabric.js, Paper.js, or Konva.js will be used to create the canvas, handle SVG elements, and manage the complex drawing and manipulation logic.
+
+Drag-and-Drop Library: A library like @dnd-kit/core will be used for drag-and-drop functionality of elements onto the canvas from the sidebar.
+
+UI/UX Focus: Custom-designed icons, elegant transitions, and a meticulously crafted component library will be built on top of Shadcn UI to create a high-end feel.
+
+Backend:
+
+Framework: FastAPI (Python)
+
+Why: High-performance, asynchronous, and well-suited for both the image generation and the SVG/Vector logic. Its support for Vercel functions is a perfect fit.
+
+Database & File Storage: Supabase (PostgreSQL, Storage)
+
+Why: The managed PostgreSQL database will store all user data, design project metadata, and generated assets. Supabase Storage will hold the SVG files, rasterized images, and other creative assets. This simplifies the tech stack greatly.
+
+Payment Processing: Stripe
+
+Why: The industry standard for handling subscriptions and managing customer billing.
+
+AI-Powered Generation (Serverless-Compatible):
+
+Service: A text-to-image API (e.g., Stability AI, DALL-E) and/or a text-to-SVG service if available. The backend will simply make API calls to these services, avoiding local dependency issues on Vercel.
+
+Asset Export (for the Editor):
+
+Libraries: A pure Python library for image manipulation like Pillow to handle rasterization of the SVG and canvas data for PNG/JPG exports. For SVG exports, the raw vector data from the frontend can be saved directly.
+
+Detailed Feature Requirements & Implementation Steps:
+
+Project Setup (Monorepo with Vercel):
+
+Repository Structure: Create frontend/ and backend/ folders at the root of the monorepo.
+
+Vercel Configuration: Use a root vercel.json file to define both frontend and backend as separate projects, enabling independent deployment and optimized builds on Vercel.
+
+Frontend (Next.js with Clerk, Tailwind, Shadcn UI):
+
+Overall UI/UX Philosophy:
+
+Minimalist & Clean: The design will prioritize clarity and reduce visual clutter. Ample whitespace will be used to guide the user's eye.
+
+Intuitive Workflow: Complex tasks will be broken down into simple, logical steps. The interface will feel natural to navigate for both novice and experienced users.
+
+Responsive Design: The application will be fully responsive, adapting seamlessly to various screen sizes (desktop, tablet, mobile) for a consistent experience across devices.
+
+Accessibility: Adhere to WCAG guidelines where possible, ensuring good contrast, keyboard navigation, and ARIA attributes for screen readers.
+
+Theming (Light/Dark Mode):
+
+Root-level Implementation: Implement light and dark themes using CSS variables managed by Tailwind CSS. A global context provider will handle theme switching, ensuring all components respect the chosen theme.
+
+Persistent Preference: User's theme preference will be saved in local storage to persist across sessions.
+
+Toggle Component: A visually appealing toggle button (e.g., moon/sun icon) will be prominently placed, likely in the header, for users to switch between modes. Transitions between modes will be smooth and subtle.
+
+Authentication & Dashboard:
+
+Authentication Flow: Utilize Clerk's pre-built UI components for secure and user-friendly sign-up, sign-in, password reset, and user profile management.
+
+Dashboard Layout:
+
+Navigation Bar (Top): A sleek, sticky header with branding (PikaCanvas logo), global navigation links (Dashboard, Editor, Templates, Pricing), user avatar/profile menu, and the light/dark mode toggle.
+
+Sidebar (Left - optional, or context-sensitive): For broader navigation within the dashboard (e.g., "My Projects," "Shared with Me," "Templates," "Account Settings").
+
+Main Content Area:
+
+Project Gallery: A visually rich grid or list view of all user's design projects. Each project card will display a thumbnail, title, last modified date, and quick actions (edit, duplicate, delete, share).
+
+Search & Filter: Prominent search bar and filtering options (e.g., by type, date, tags) to easily locate projects.
+
+"Create New Project" Button: A clear, call-to-action button, possibly with options for "Start from Scratch" or "Use Template."
+
+WYSIWYG Editor:
+
+Overall Layout: A three-column layout (left sidebar, main canvas, right sidebar).
+
+Top Bar (Editor Specific): Project title, "Save" button (auto-save indicated), "Undo/Redo," "Zoom," "Export," and a "Share" button.
+
+Left Sidebar (Tools & Assets Panel):
+
+Tool Palette: Icons for core tools: Selection Tool (pointer), Shape Tools (rectangle, circle, polygon, line), Pen Tool (for custom paths), Text Tool, Image Upload, AI Generate.
+
+Asset Library: Sections for:
+
+Shapes: Predefined geometric shapes that can be dragged onto the canvas.
+
+Icons: A small library of basic vector icons.
+
+Images: Upload button (drag-and-drop zone with file browser fallback) and a gallery of user's uploaded images.
+
+AI Generated Assets: A scrollable gallery displaying previously generated images or vector assets from AI, ready to be dragged onto the canvas.
+
+Backgrounds: Options for solid colors, gradient presets, and image backgrounds for the canvas.
+
+Templates: A browseable section for user's saved templates and public/premium templates. Each template card will have a thumbnail and an "Apply" button.
+
+Main Canvas Area:
+
+Interactive Canvas: The central, large area where designs are created. Users can directly draw, drag, drop, and manipulate elements.
+
+Real-time Feedback: All changes made through the sidebars or direct canvas interaction will be immediately reflected on the canvas.
+
+Zoom & Pan: Standard zoom in/out functionality (buttons and scroll wheel) and panning (drag canvas).
+
+Grids & Guides (Toggleable): Optional visual grids, snap-to-grid, and smart guides for precise alignment.
+
+Right Sidebar (Customization & Properties Panel):
+
+Contextual Panel: This panel's content will dynamically change based on the currently selected element(s) on the canvas.
+
+Common Properties (for any selected element):
+
+Position & Size: X, Y coordinates, Width, Height inputs, Lock Aspect Ratio toggle.
+
+Rotation & Skew: Slider/input for rotation angle, possibly skew controls.
+
+Opacity: Slider for element transparency.
+
+Layering: Buttons for "Bring Forward," "Send Backward," "Bring to Front," "Send to Back."
+
+Shape-Specific Properties:
+
+Fill: Color picker (hex, RGB, HSL, gradient options).
+
+Stroke: Color picker, stroke width slider, stroke style (solid, dashed, dotted).
+
+Border Radius: Slider/input for rounding corners.
+
+Text-Specific Properties:
+
+Font Family Selector: Dropdown with a curated list of web-safe and Google Fonts.
+
+Font Size: Slider/input.
+
+Font Weight/Style: Bold, Italic toggles.
+
+Text Alignment: Left, Center, Right, Justify.
+
+Line Height, Letter Spacing.
+
+Text Color.
+
+Image-Specific Properties:
+
+Crop Tool.
+
+Filters/Adjustments: Basic image filters (grayscale, sepia, brightness, contrast).
+
+Replace Image Button.
+
+AI Generation Tab: A dedicated section within the right sidebar allowing users to input text prompts for image or vector generation. It will include:
+
+Text input field for prompt.
+
+"Generate" button.
+
+Options for style/mood (e.g., "realistic," "cartoon," "abstract").
+
+A loading indicator during generation.
+
+Once generated, the asset can be directly placed on the canvas.
+
+User Interaction & Feedback:
+
+Tooltips & Popovers: Provide helpful tooltips on hover for icons and complex controls.
+
+Loading States: Clear loading indicators for API calls, image uploads, and AI generation.
+
+Success/Error Notifications: Toast notifications for successful saves, exports, or any errors.
+
+Context Menus: Right-click context menus on canvas elements for quick actions like duplicate, delete, group, ungroup.
+
+Keyboard Shortcuts: Implement common keyboard shortcuts (e.g., Ctrl/Cmd+Z for undo, Delete for deleting elements).
+
+Backend (FastAPI with Supabase, Stripe, AI Service):
+
+API Endpoints for Asset Generation:
+
+/api/projects/save (POST): Receives the JSON structure of a new or edited design project (including all elements, their properties, and canvas settings) from the editor. Saves this data to the Supabase database.
+
+/api/projects/load (GET): Retrieves a project's JSON data from Supabase based on a project ID, sending it to the frontend editor for loading.
+
+/api/asset/generate (POST): Receives a text prompt and any optional style parameters from the frontend. Calls the chosen AI text-to-image/vector service API. Saves the generated asset (image file or SVG string) to Supabase Storage, and stores a reference in the database. Returns a URL or data URI of the generated asset to the frontend.
+
+/api/asset/export (POST): Receives the project's canvas data (e.g., a serialized SVG string from Fabric.js) and the desired export format (PNG, JPG, SVG).
+
+For PNG/JPG: Uses Pillow to rasterize the SVG/canvas data into the specified image format.
+
+For SVG: Saves the raw SVG string.
+
+Uploads the generated file to Supabase Storage. Returns a secure, temporary download URL to the frontend.
+
+Admin Dashboard Endpoints (Protected with Admin Role):
+
+/admin/users (GET/PUT/DELETE): Manage user accounts: retrieve a list of all users, update user roles, reset passwords, or deactivate accounts.
+
+/admin/templates (GET/POST/DELETE): Manage available design templates: retrieve a list of all default templates, upload new templates (as JSON structures), update existing templates, or delete templates.
+
+/admin/analytics (GET): Retrieve key performance metrics: total number of active users, new sign-ups, number of projects created, number of AI assets generated, total revenue, and subscription breakdown.
+
+Admin Dashboard (Protected Next.js Route):
+
+Protected Access: Only users with the Admin role (managed by Clerk) can access these routes.
+
+"One-Click" Management Philosophy: Streamlined interfaces with clear actions and minimal steps.
+
+User Management:
+
+User Table: A sortable and searchable table displaying user details (ID, Email, Role, Subscription Status, Last Login).
+
+Action Buttons: For each user, "Edit Role," "Reset Password," "Deactivate Account," "View Projects."
+
+Add User: Option to manually add new users.
+
+Template Management:
+
+Template Gallery: A visual grid of all available templates with thumbnails, titles, and descriptions.
+
+Add New Template: A form or upload interface to add new default templates, including uploading a preview image and the template's JSON structure.
+
+Edit/Delete Template: Buttons on each template card to modify or remove it.
+
+Analytics:
+
+Key Metrics Display: Visually appealing cards or charts showing:
+
+Total Registered Users, Active Users.
+
+Monthly Recurring Revenue (MRR), Total Revenue.
+
+Number of Projects Created (overall, monthly).
+
+Number of AI Generations (overall, monthly).
+
+Subscription Plan Distribution (e.g., X Free, Y Starter, Z Pro).
+
+Date Range Selector: For filtering analytics data.
+
+Payment Integration & Monetization:
+
+Pricing Tiers:
+
+Free Tier: Limited number of projects, basic tools, restricted AI generations, limited storage.
+
+Starter Tier: Increased project limit, all core tools, more AI generations, increased storage, access to some premium templates.
+
+Pro Tier: Unlimited projects, all tools, highest AI generation limits, extensive storage, access to all premium templates, priority support.
+
+Pricing Page (Marketing Frontend): A clear, well-designed pricing page outlining the features and benefits of each tier.
+
+Stripe Integration:
+
+Subscription Management: Use Stripe Checkout or Stripe Portal for users to subscribe, upgrade/downgrade plans, and manage their billing information.
+
+Webhooks: Implement Stripe webhooks in the backend to listen for subscription changes (e.g., customer.subscription.updated, customer.subscription.deleted) and update user roles/permissions in Supabase accordingly.
+
+Billing Portal Link: Provide users with a direct link to their Stripe customer portal from their user profile settings.

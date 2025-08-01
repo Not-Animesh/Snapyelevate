@@ -1,0 +1,241 @@
+Overall Goal for this Phase: Bring the Snapy SaaS to a fully functional MVP state, with a polished, highly responsive UI/UX, complete backend integration, robust authentication, foundational monetization, and seamless AI asset generation, all built with an AI-driven "vibe coding" approach (AI generates, debugs, and fixes).
+
+Phase 1: Completing Core SaaS Functionality ("What's Left")
+
+AI Task: Implement the entire backend, integrate all specified third-party services, and connect the frontend to this new backend, handling data flow and state management.
+
+
+
+Backend Development (FastAPI):
+
+Project Initialization: Create the backend/ directory at the root of the monorepo. Initialize a FastAPI project within it.
+
+API Endpoints:
+
+/api/projects/save (POST): Accept a JSON payload representing a PikaCanvas design project (including all elements, their properties, and canvas settings). Store this data securely in Supabase PostgreSQL.
+
+/api/projects/load (GET): Retrieve a specific project's JSON data from Supabase based on a project_id.
+
+/api/asset/generate (POST): Accept a text prompt and optional parameters (e.g., style, aspect ratio). Make an API call to Google's Gemini API (for image generation) or Stability AI API. Save the generated image/vector asset to Supabase Storage. Return the URL of the stored asset.
+
+/api/asset/export (POST): Receive project data (serialized SVG, canvas data, or image) and desired format (PNG, JPG, SVG, PDF). Use Pillow (for rasterization to PNG/JPG) or other suitable pure Python libraries (for SVG/PDF generation) to create the file. Upload the generated file to Supabase Storage. Return a secure, temporary download URL.
+
+Authentication Endpoints: Integrate with Clerk's backend SDKs/APIs to verify user tokens for all protected routes and retrieve user information.
+
+Webhook Endpoints: Set up webhook endpoints for Stripe to listen for subscription changes (e.g., customer.subscription.updated).
+
+Database Schema: Define the necessary Supabase PostgreSQL schema for:
+
+users (linked to Clerk's user IDs)
+
+projects (storing JSON design data, user ID, metadata)
+
+assets (storing generated asset metadata, storage URLs, user ID)
+
+subscriptions (linking user ID to Stripe subscription status/tier).
+
+Serverless Compatibility: Ensure all backend code is compatible with Vercel's serverless function environment, avoiding problematic binaries and excessive cold starts where possible.
+
+Core Editor Functionality (Deep Frontend-Backend Integration):
+
+Vector Graphics Canvas (Fabric.js/Konva.js Integration):
+
+In frontend/components/editor/editor-canvas.tsx, fully integrate Fabric.js (or chosen alternative).
+
+Implement basic canvas setup, object addition (rectangles, circles, text, images), selection, and basic manipulation (move, resize, rotate).
+
+Ensure a clear, reactive connection between the canvas state and the EditorPropertiesPanel.
+
+Editor Sidebar (EditorSidebar.tsx):
+
+Tools Tab: When a tool icon is clicked (e.g., "Rectangle", "Text"), activate that tool mode on the canvas, allowing the user to draw/add the corresponding element.
+
+Assets Tab: Implement image upload functionality, connecting it to a backend endpoint that pushes images to Supabase Storage and returns a URL to display on canvas. Display "Recent Images" dynamically from Supabase.
+
+AI Tab: Add a text input field for the AI prompt. When the "Start Generating" button is clicked, send the prompt to the backend's /api/asset/generate endpoint. Display generated assets as draggable elements onto the canvas.
+
+Templates Tab: Implement functionality to load pre-defined templates (stored in Supabase, accessible via backend API) onto the canvas.
+
+Properties Panel (EditorPropertiesPanel.tsx):
+
+Dynamic UI: Dynamically update this panel based on the selected canvas element (e.g., show "Typography" only when text is selected).
+
+Real-time Updates: Implement two-way data binding: changes in input fields/sliders in the panel should immediately reflect on the selected canvas element, and selecting a new element should populate the panel with its current properties.
+
+Full Controls: Implement all specified property controls (Transform: X/Y, Width/Height, Rotation; Appearance: Fill, Stroke, Opacity, Border Radius; Typography: Font Family, Size, Weight, Color).
+
+Save & Load Project:
+
+Implement the "Save" button in EditorHeader.tsx to send the current canvas state (serialized Fabric.js JSON) to /api/projects/save.
+
+On loading an editor project (e.g., from the Dashboard), retrieve the project data from /api/projects/load and deserialize it into the Fabric.js canvas.
+
+Export Functionality:
+
+Implement the "Export" button in EditorHeader.tsx to capture the current canvas (potentially converting SVG to PNG/JPG if needed). Send this data to the backend's /api/asset/export endpoint. Handle the returned download URL.
+
+Authentication (Clerk Integration):
+
+Route Protection: Protect /dashboard, /editor, /screenshot-editor, /tweet-generator (and any future admin routes) using Clerk. Unauthenticated users should be redirected to a sign-in page.
+
+Sign-in/Sign-up/User Profile: Ensure Clerk's pre-built UI components are integrated for a seamless authentication experience.
+
+User Information: Retrieve and display user information (e.g., in the DashboardHeader's user menu) using Clerk's frontend hooks.
+
+Monetization (Stripe Integration):
+
+Pricing Page CTAs: Connect the "Get Started" and "Start Free Trial" buttons on the Pricing page to initiate Stripe checkout flows.
+
+Subscription Management: Implement a basic page or component (e.g., in user settings) where users can manage their subscriptions via Stripe's customer portal.
+
+Backend Webhook Handler: Set up a backend endpoint to receive and process Stripe webhooks (e.g., subscription creation, update, cancellation) and update the user's subscription status in your Supabase database.
+
+Feature Gating: Based on the user's subscription status from Supabase (retrieved via Clerk/backend), dynamically enable/disable premium features (e.g., more AI generations, premium export formats, "All Pro Tools").
+
+Admin Dashboard:
+
+Protected Routes: Create protected admin routes (e.g., /admin) that only users with an admin role can access.
+
+User Management UI: Create a UI for listing, editing (roles, status), and deleting users. This will interact with backend admin APIs.
+
+Template Management UI: Create a UI for admins to add, edit, or delete default templates accessible to users.
+
+Basic Analytics UI: Display key metrics (total users, projects, AI generations, revenue) pulled from Supabase via backend admin APIs.
+
+Monorepo Deployment (vercel.json):
+
+Update the root vercel.json to properly configure both the frontend/ (Next.js) and backend/ (FastAPI serverless functions via @vercel/python) for a unified Vercel deployment. Ensure correct build commands and output directories are specified for each.
+
+Phase 2: UI/UX & Responsiveness Enhancements
+
+AI Task: Refine the existing and new UI components for maximum visual appeal, responsiveness, and user-friendliness, ensuring seamless interaction and clear feedback.
+
+
+
+General UI/UX Polish:
+
+Consistency: Ensure absolute consistency in spacing, typography, button styles, card shadows, and border-radii across the entire application.
+
+Micro-interactions & Animations: Implement subtle, tasteful animations on hover, click, and state changes (e.g., loading indicators, successful save confirmations, error messages). Use tailwindcss-animate for Radix UI components where applicable, and custom Tailwind keyframes for other elements.
+
+Visual Feedback: Every user action should have immediate, clear visual feedback (e.g., a button state changing, a success toast, a spinner while an AI asset generates).
+
+Empty States: Design and implement visually appealing empty states for lists/grids (e.g., "No projects yet," "No generated assets").
+
+Error States: Implement user-friendly error messages for form submissions, API failures, or invalid inputs.
+
+Responsiveness Improvements:
+
+Fluid Layouts: Ensure all layouts (especially Dashboard and Editor) adapt gracefully across common breakpoints (sm, md, lg, xl in Tailwind). Avoid fixed widths unless absolutely necessary.
+
+Mobile-First Design: Prioritize the mobile experience. Elements should stack vertically and controls should be touch-friendly on smaller screens.
+
+Component Responsiveness: Verify that all Shadcn UI components behave responsively. If a component isn't responsive by default, adjust its className with responsive Tailwind utilities (e.g., md:grid-cols-2).
+
+Image Optimization: Ensure images load efficiently and are responsive. The next/image component (if not already used) should be leveraged with proper sizes and fill props where applicable.
+
+Editor Responsiveness: Ensure the EditorCanvas dynamically resizes to fill its available space, and that its controls remain usable on different screen sizes (consider a collapsed sidebar for mobile).
+
+Workflow & Interactivity (Ensuring All Buttons Work):
+
+Full Button Functionality: Every button, link, and interactive element in the provided frontend code must be connected to its corresponding logic (either client-side state updates or backend API calls). This includes:
+
+All CTA buttons on marketing pages.
+
+All dashboard buttons (Search, Filter, New Project) and project card dropdown actions (Edit, Duplicate, Share, Delete).
+
+All editor header buttons (Save, Share, Export, Undo/Redo, Zoom).
+
+All editor sidebar tool/asset/AI/template buttons.
+
+All editor properties panel controls (sliders, inputs, color pickers).
+
+Seamless User Flow: Ensure logical transitions between different parts of the application (e.g., from Dashboard to Editor, after sign-in, after subscription).
+
+Phase 3: Environment Configuration
+
+AI Task: Create the necessary environment files and populate them with placeholder values, along with instructions.
+
+
+
+.env File (Local Development):
+
+Create a .env file at the root of your monorepo.
+
+Populate it with placeholder variables required for both frontend and backend development:
+
+
+
+# Clerk Authentication
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_CLERK_PUBLISHABLE_KEY
+
+CLERK_SECRET_KEY=sk_test_YOUR_CLERK_SECRET_KEY
+
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/signin
+
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/signup
+
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+
+
+
+# Supabase
+
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY
+
+# For backend direct interaction (not public key)
+
+
+
+# Stripe
+
+STRIPE_SECRET_KEY=sk_test_YOUR_STRIPE_SECRET_KEY
+
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_STRIPE_PUBLISHABLE_KEY
+
+STRIPE_WEBHOOK_SECRET=whsec_YOUR_STRIPE_WEBHOOK_SECRET
+
+
+
+# AI Services (e.g., Google Gemini or Stability AI)
+
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+
+STABILITY_AI_API_KEY=YOUR_STABILITY_AI_API_KEY
+
+# Choose one or both based on implementation
+
+
+
+# Other (if needed, e.g., for specific external screenshot APIs)
+
+EXTERNAL_SCREENSHOT_API_KEY=YOUR_EXTERNAL_SCREENSHOT_API_KEY
+
+.env.sample File:
+
+Create a .env.sample file at the root of your monorepo.
+
+Copy the structure of the .env file into it, but replace actual keys with YOUR_..._KEY placeholders and add comments explaining each variable's purpose.
+
+AI's "Vibe Coding" Execution Approach:
+
+The AI assistant should assume the role of the primary developer, taking the following actions based on this prompt:
+
+
+
+Autonomous Code Generation: Generate all necessary code (JSX, TypeScript, Python, Tailwind CSS classes, database schemas) without explicit line-by-line instructions.
+
+Intelligent Integration: Understand how different modules and services (frontend components, backend APIs, Clerk, Supabase, Stripe, AI APIs) fit together and implement the necessary integration logic.
+
+Proactive Debugging: Identify and automatically fix common issues (e.g., type errors, API communication failures, UI rendering bugs) during the development process. If an issue is complex, provide clear explanations and multiple potential solutions for your review.
+
+Performance Optimization: Implement best practices for performance (e.g., lazy loading, efficient data fetching, memoization where appropriate).
+
+Testing (Implicit): Ensure the generated code is functional and the described workflows are working end-to-end. Report any areas that require manual testing or review due to complexity.
+
+Documentation: Provide clear comments in the code and, if possible, generate a brief README or setup instructions for the new backend part.
