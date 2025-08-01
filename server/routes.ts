@@ -180,7 +180,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         quality: "standard",
       });
 
-      const imageUrl = response.data[0].url;
+      const imageUrl = response.data && response.data.length > 0 ? response.data[0].url : undefined;
+      if (!imageUrl) {
+        return res.status(500).json({ error: "Failed to generate image: No image URL returned from OpenAI." });
+      }
       
       // Update user's AI usage
       await storage.updateUserAIUsage(req.user.id, user.aiGenerationsUsed + 1);
@@ -190,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.user.id,
         projectId: req.body.projectId || null,
         filename: `ai-generated-${Date.now()}.png`,
-        url: imageUrl!,
+        url: imageUrl,
         type: "ai-generated",
         size: 0, // We don't know the size without downloading
         aiPrompt: prompt,
